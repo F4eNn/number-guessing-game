@@ -1,0 +1,16 @@
+{
+    "name": "mateusz/number-guessing-game",
+    "description": "Number Guessing Game",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mateusz",
+            "email": "mateusz4k@outlook.com"
+        }
+    ],
+    "require": {}
+}
