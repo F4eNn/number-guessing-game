@@ -4,7 +4,7 @@ namespace App;
 
 class SetupGame
 {
-    private const AVAILABLE_LEVELS = [
+    protected const AVAILABLE_LEVELS = [
         '1' => "Easy",
         '2' => "Medium",
         '3' => "Hard"

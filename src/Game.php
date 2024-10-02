@@ -2,7 +2,7 @@
 
 namespace App;
 
-class Game
+class Game extends SetupGame
 {
     private ?int  $secretNumber = null;
     private int $attempts = 0;
@@ -11,8 +11,8 @@ class Game
     private const CHANCES_PER_LEVEL = ["3" => 3, "2" => 5, "1" => 10];
     private const HINT_MESSAGES = [
         "to_low" => "\e[33mIncorrect! The number is greater than",
-        "to_high" => "\e[33mIncorrect! The number is lower than",
-        "correct" => "\e[32mCongrats, you guessed!"
+        "to_high" => "\e[33mIncorrect The number is lower than",
+        "correct" => "\e[32mCongrats! you guessed"
     ];
 
     public function __construct(private string $level)
@@ -24,6 +24,8 @@ class Game
 
     private function processUserGuess()
     {
+        $time_start = microtime(true);
+        print_r($this->secretNumber);
         while (true) {
             if ($this->isLose()) {
                 echo "\e[31mYou lost, try again.\e[0m\n";
@@ -42,10 +44,49 @@ class Game
             } elseif ($userGuess < $this->secretNumber) {
                 echo  self::HINT_MESSAGES['to_low'] . " $userGuess\e[0m -  $this->chances chances left \n";
             } else {
-                echo self::HINT_MESSAGES['correct'] . " the correct number in $this->attempts attempts.";
+                $time_end = microtime(true);
+                $time = round($time_end - $time_start, 2);
+
+                echo self::HINT_MESSAGES['correct'] . " the correct number in $this->attempts attempts. \nIt took you $time seconds.
+                \n\e[0m";
+                $this->track_highest_score($time);
                 break;
             }
         }
+    }
+    private function track_highest_score(float $time)
+    {
+        $data = ["level" => self::AVAILABLE_LEVELS[$this->level], "attempts" => $this->attempts, "seconds" => "$time"];
+        $file_name = "highest_score.json";
+        if (!file_exists($file_name)) {
+            return $this->save_highest_score($file_name, [$data]);
+        }
+        $highest_score = json_decode(file_get_contents($file_name), true);
+
+        $isExist = false;
+
+        foreach ($highest_score as &$val) {
+            if (self::AVAILABLE_LEVELS[$this->level] === $val['level']) {
+                $isExist = true;
+                if ($this->attempts < (int)$val['attempts']) {
+                    $val["attempts"] = $this->attempts;
+                    $val["seconds"] = $time;
+                    echo "\e[34mCongrats! New highest record added.\e[0m\n";
+                    echo "\n";
+                    $this->save_highest_score($file_name, $highest_score);
+                    break;
+                }
+            }
+        }
+        if (!$isExist) {
+            array_push($highest_score, $data);
+            $this->save_highest_score($file_name, $highest_score);
+        }
+    }
+
+    private function save_highest_score(string $file_name, array $highest_score)
+    {
+        file_put_contents($file_name, json_encode($highest_score, JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
     }
     private function  isLose()
     {
