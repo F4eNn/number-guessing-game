@@ -9,6 +9,11 @@ class Game extends SetupGame
     private ?int $chances = null;
 
     private const CHANCES_PER_LEVEL = ["3" => 3, "2" => 5, "1" => 10];
+    private const HINT_ACTIVATION_POINTS = [
+        self::AVAILABLE_LEVELS['1'] => 5,
+        self::AVAILABLE_LEVELS['2'] => 3,
+        self::AVAILABLE_LEVELS['3'] => 2
+    ];
     private const HINT_MESSAGES = [
         "to_low" => "\e[33mIncorrect! The number is greater than",
         "to_high" => "\e[33mIncorrect The number is lower than",
@@ -25,12 +30,12 @@ class Game extends SetupGame
     private function processUserGuess()
     {
         $time_start = microtime(true);
-        print_r($this->secretNumber);
         while (true) {
             if ($this->isLose()) {
-                echo "\e[31mYou lost, try again.\e[0m\n";
+                echo "\e[31mYou lost!\nThe secret number was $this->secretNumber\nTry again.\e[0m\n";
                 break;
             }
+            $this->activate_hints();
             $this->chances -= 1;
             $this->attempts += 1;
 
@@ -46,7 +51,6 @@ class Game extends SetupGame
             } else {
                 $time_end = microtime(true);
                 $time = round($time_end - $time_start, 2);
-
                 echo self::HINT_MESSAGES['correct'] . " the correct number in $this->attempts attempts. \nIt took you $time seconds.
                 \n\e[0m";
                 $this->track_highest_score($time);
@@ -91,5 +95,22 @@ class Game extends SetupGame
     private function  isLose()
     {
         return $this->chances === 0;
+    }
+
+    private function activate_hints()
+    {
+
+        if (self::HINT_ACTIVATION_POINTS[self::AVAILABLE_LEVELS[$this->level]] !== (int)$this->attempts) return;
+        echo"\n";
+        $line = readline("Show hint? y/N:");
+        echo"\n";
+        if (strtolower($line) === "y") {
+            if ($this->secretNumber > 9) {
+                $startsWith = substr((string)$this->secretNumber, 0, 1);
+                echo "\e[95mThe secret number starts with $startsWith. \e[0m\n";
+            } else {
+                echo "\e[95mThe secret number is a single digit number.\e[0m\n";
+            }
+        };
     }
 }
