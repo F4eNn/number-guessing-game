@@ -14,7 +14,7 @@ while (true) {
     $game = new Game($level);
 
     $isInit = false;
-    $restart = readline("Do you want to play again? y/n:");
+    $restart = readline("Do you want to play again? y/N:");
 
     if ($restart !== "y") {
         echo "Thank you for the game :)";
