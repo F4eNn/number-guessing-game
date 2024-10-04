@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 800 400" width="600" height="200" xmlns="http://www.w3.org/2000/svg">
+	<foreignObject width="100%" height="100%">
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<style>
+		                @keyframes background{
+		                    0%{
+		                        opacity: .6;
+		                    }
+		                    100% {
+		                        opacity: 1;
+		                    }
+		                }
+    			h1 {
+    				font-size: 70px;
+    				line-height: 1.3;
+    				letter-spacing: 5px;
+    				text-transform: uppercase;
+		                color: transparent;
+		                background: radial-gradient(circle, rgba(155,125,37,1) 4%, rgba(187,96,18,1) 48%, rgba(184,128,58,1) 72%, rgba(241,189,101,1) 87%);95%) no-repeat;
+		                background-clip: text;
+		                animation: background 1.5s infinite alternate;
+    			}
+                p {
+                    font-size: 14px;
+                }
+    		</style>
+		<div align="center">
+			<h1>Number Guessing Game</h1>
+		</div>	
+    	</div>
+    </foreignObject>
+</svg>
